@@ -1,7 +1,7 @@
 const {Sequelize} = require('sequelize')
 const connection = require('../database')
 
-const Form = connection.define('form', {
+const Orcamento = connection.define('orcamento', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -27,6 +27,9 @@ const Form = connection.define('form', {
     ufForm: {
         type: Sequelize.STRING
     },
+    instalation: {
+        type: Sequelize.STRING
+    },
     powerDistributor: {
         type: Sequelize.STRING
     },
@@ -38,7 +41,12 @@ const Form = connection.define('form', {
     },
     financing: {
         type: Sequelize.STRING
+    },
+    status: {
+        type: Sequelize.ENUM,
+        values: ['nao_atendido','em_atendimento', 'atendido', 'com_impedimento' ],
+        defaultValue: 'nao_atendido'
     }
 })
 
-module.exports = Form
+module.exports = Orcamento

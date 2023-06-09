@@ -2,22 +2,37 @@ require('dotenv').config()
 const express = require('express');
 const connection = require('./src/database')
 const cors = require('cors');
-const { request } = require('https');
 
 const app = express();
-app.use(cors());
-app.use(express.json())
+app.use((request, response, next) => {
+  response.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+  response.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
-//connection.authenticate()
-//connection.sync({ alter: true })
+app.use(cors({
+  origin: 'http://127.0.0.1:5500',
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'] // Adicione o cabeçalho 'Content-Type' aqui
+}));
 
-//const insertForm = require('./src/controllers/insertForm');
+app.use(express.json());
 
-//app.post('/form', insertForm);
+connection.authenticate();
+connection.sync({ alter: true });
 
-app.get('/teste', (request, response)=>{
-  response.send('Está funcionando!')
-})
+const insertForm = require('./src/controllers/orcamento/insertForm');
+const cadFuncionario = require('./src/controllers/funcionario/cadFuncionario');
+const getOrcamentos = require('./src/controllers/dashboard/getOrcamentos.js')
+const session = require('./src/controllers/session/session');
+const validateToken = require('./src/middlewares/validateToken');
+
+app.post('/form', insertForm);
+app.post('/funcionario', validateToken, cadFuncionario);
+app.get('/funcioario')
+app.post('/orcamento');
+app.get('/dashboard', validateToken, getOrcamentos)
+app.post('/session', session);
 
 app.listen(3000, () => {
   console.log('Servidor iniciado na porta 3000.');
